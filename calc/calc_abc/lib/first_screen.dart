@@ -57,7 +57,12 @@ class _FirstScreenState extends State<FirstScreen> {
     // для перехода на новый экран
     // Он добавляет новый экран в стек навигации, 
     //позволяя пользователю вернуться на предыдущий экран
-    
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => SecondScreen(a: a, b: b, c: c),
+      ),
+    );
   }
 
   @override
