@@ -87,18 +87,20 @@ class _FirstScreenState extends State<FirstScreen> {
         child: Column(
           children: [
             TextField(
+              // текущее значение
               controller: _aController,
-              keyboardType: TextInputType.number,
+              // labelText :Добавляет метку (label)
+              // над текстовым полем
+              // Метка "поднимается" вверх, когда 
+              //пользователь начинает вводить текст
               decoration: InputDecoration(labelText: 'Введите a (x^2)'),
             ),
             TextField(
               controller: _bController,
-              keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: 'Введите b (x)'),
             ),
             TextField(
               controller: _cController,
-              keyboardType: TextInputType.number,
               decoration: InputDecoration(labelText: 'Введите c'),
             ),
             Row(
@@ -106,6 +108,7 @@ class _FirstScreenState extends State<FirstScreen> {
                 Checkbox(
                   value: _isAgreed,
                   onChanged: (value) {
+                    // меняем значение для согласия
                     setState(() {
                       _isAgreed = value!;
                     });
@@ -133,12 +136,12 @@ class SecondScreen extends StatelessWidget {
   SecondScreen({required this.a, required this.b, required this.c});
 
   List<String> calculateRoots() {
-    double discriminant = b * b - 4 * a * c;
-    if (discriminant > 0) {
-      double root1 = (-b + sqrt(discriminant)) / (2 * a);
-      double root2 = (-b - sqrt(discriminant)) / (2 * a);
+    double discr = b * b - 4 * a * c;
+    if (discr > 0) {
+      double root1 = (-b + sqrt(discr)) / (2 * a);
+      double root2 = (-b - sqrt(discr)) / (2 * a);
       return ['Два корня: ${root1.toStringAsFixed(2)} и ${root2.toStringAsFixed(2)}'];
-    } else if (discriminant == 0) {
+    } else if (discr == 0) {
       double root = -b / (2 * a);
       return ['Один корень: ${root.toStringAsFixed(2)}'];
     } else {
