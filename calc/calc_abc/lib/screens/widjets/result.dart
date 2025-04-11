@@ -1,4 +1,6 @@
+import 'package:calc_abc/screens/cubit/screen_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ResultWidget extends StatelessWidget {
   const ResultWidget({
@@ -25,6 +27,12 @@ class ResultWidget extends StatelessWidget {
         Text('${a}x² + ${b}x + ${c} = 0'),
         SizedBox(height: 10),
         ...roots.map((root) => Text(root)).toList(),
+        ElevatedButton(
+          onPressed: () {
+            context.read<RootsCubit>().resetCubit();
+          },
+          child: Text('вернуться назад'),
+        ),
       ],
     );
   }

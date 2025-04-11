@@ -1,5 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'screev_state.dart'; 
+import 'screev_state.dart';
 import 'dart:math';
 
 // Кубит для вычисления корней квадратного уравнения
@@ -11,7 +11,9 @@ class RootsCubit extends Cubit<RootsState> {
   void calculateRoots(double a, double b, double c) {
     // Проверка на некорректные входные данные
     if (a == 0) {
-      emit(RootsErrorState(errorMessage: 'Коэффициент "a" не должен быть равен 0'));
+      emit(
+        RootsErrorState(errorMessage: 'Коэффициент "a" не должен быть равен 0'),
+      );
       return;
     }
 
@@ -26,7 +28,9 @@ class RootsCubit extends Cubit<RootsState> {
       if (discriminant > 0) {
         double root1 = (-b + sqrt(discriminant)) / (2 * a);
         double root2 = (-b - sqrt(discriminant)) / (2 * a);
-        roots = ['Два корня: ${root1.toStringAsFixed(2)} и ${root2.toStringAsFixed(2)}'];
+        roots = [
+          'Два корня: ${root1.toStringAsFixed(2)} и ${root2.toStringAsFixed(2)}',
+        ];
       } else if (discriminant == 0) {
         double root = -b / (2 * a);
         roots = ['Один корень: ${root.toStringAsFixed(2)}'];
@@ -35,17 +39,14 @@ class RootsCubit extends Cubit<RootsState> {
       }
 
       // Переход в состояние успешного вычисления
-      emit(
-        RootsCalculatedState(
-          a: a,
-          b: b,
-          c: c,
-          roots: roots,
-        ),
-      );
+      emit(RootsCalculatedState(a: a, b: b, c: c, roots: roots));
     } catch (e) {
       // Переход в состояние ошибки при возникновении исключения
       emit(RootsErrorState(errorMessage: 'Ошибка при вычислении корней: $e'));
     }
+  }
+
+  void resetCubit() {
+    emit(InitialRootsState());
   }
 }

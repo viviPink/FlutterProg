@@ -18,34 +18,42 @@ class _QuadraticEquationScreenState extends State<QuadraticEquationScreen> {
       appBar: AppBar(title: Text('Калькулятор квадратных уравнений')),
       body: BlocProvider(
         create: (context) => RootsCubit(),
-        child: BlocBuilder<RootsCubit, RootsState>(
-          builder: (context, state) {
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  // обращаемся к виджетам для ввода данных
-                  if (state is InitialRootsState) FormInput(),
-                  // Отображение результатов или ошибок
-                  if (state is RootsCalculatedState)
-                    // обращаемся к виджетам для вывода результатат
-                    ResultWidget(
-                      a: state.a,
-                      b: state.b,
-                      c: state.c,
-                      roots: state.roots,
-                    ),
-                  if (state is RootsErrorState)
-                    Padding(
-                      padding: const EdgeInsets.only(top: 20),
-                      child: Text(
-                        state.errorMessage,
-                      ),
-                    ),
-                ],
-              ),
-            );
+        child: BlocListener<RootsCubit, RootsState>(
+          listener: (context, state) {
+            if (state is RootsErrorState) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text(state.errorMessage),
+                ),
+              );
+            }
           },
+          child: BlocBuilder<RootsCubit, RootsState>(
+            builder: (context, state) {
+              return Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  children: [
+                    // Виджет для ввода данных с валидацией
+                    if (state is InitialRootsState || state is RootsErrorState) 
+                      FormInput(
+                        onCalculate: (a, b, c) {
+                          context.read<RootsCubit>().calculateRoots(a, b, c);
+                        },
+                      ),
+                    // Отображение результатов
+                    if (state is RootsCalculatedState)
+                      ResultWidget(
+                        a: state.a,
+                        b: state.b,
+                        c: state.c,
+                        roots: state.roots,
+                      ),
+                  ],
+                ),
+              );
+            },
+          ),
         ),
       ),
     );

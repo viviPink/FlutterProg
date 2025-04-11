@@ -15,7 +15,7 @@ class MainApp extends StatelessWidget {
     return BlocProvider(
       create: (context) => RootsCubit(),
       child: MaterialApp(
-        debugShowCheckedModeBanner: false, // Убираем баннер "Debug"
+        debugShowCheckedModeBanner: false, 
         title: 'Квадратное уравнение',
         home: QuadraticEquationScreen(), 
       ),

@@ -1,20 +1,23 @@
 import 'package:calc_abc/screens/cubit/screen_cubit.dart';
-import 'package:calc_abc/screens/cubit/screev_state.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FormInput extends StatefulWidget {
-  const FormInput({super.key});
+  final Function(double a, double b, double c) onCalculate;
+
+  const FormInput({super.key, required this.onCalculate});
 
   @override
-  State<FormInput> createState() => _MyWidgetState();
+  State<FormInput> createState() => _FormInputState();
 }
 
-class _MyWidgetState extends State<FormInput> {
+class _FormInputState extends State<FormInput> {
   final TextEditingController _aController = TextEditingController();
   final TextEditingController _bController = TextEditingController();
   final TextEditingController _cController = TextEditingController();
   bool _isAgreed = false;
+  String? _aError;
+  String? _bError;
+  String? _cError;
 
   @override
   void dispose() {
@@ -33,37 +36,28 @@ class _MyWidgetState extends State<FormInput> {
           controller: _aController,
           decoration: InputDecoration(
             labelText: 'Коэффициент a (x²)',
-            errorText:
-                _aController.text.isNotEmpty &&
-                        double.tryParse(_aController.text) == null
-                    ? 'Введите число'
-                    : null,
+            errorText: _aError,
           ),
           keyboardType: TextInputType.numberWithOptions(decimal: true),
+          onChanged: (_) => _validateInputs(),
         ),
         TextField(
           controller: _bController,
           decoration: InputDecoration(
             labelText: 'Коэффициент b (x)',
-            errorText:
-                _bController.text.isNotEmpty &&
-                        double.tryParse(_bController.text) == null
-                    ? 'Введите число'
-                    : null,
+            errorText: _bError,
           ),
           keyboardType: TextInputType.numberWithOptions(decimal: true),
+          onChanged: (_) => _validateInputs(),
         ),
         TextField(
           controller: _cController,
           decoration: InputDecoration(
             labelText: 'Коэффициент c',
-            errorText:
-                _cController.text.isNotEmpty &&
-                        double.tryParse(_cController.text) == null
-                    ? 'Введите число'
-                    : null,
+            errorText: _cError,
           ),
           keyboardType: TextInputType.numberWithOptions(decimal: true),
+          onChanged: (_) => _validateInputs(),
         ),
 
         // Чекбокс согласия
@@ -77,53 +71,66 @@ class _MyWidgetState extends State<FormInput> {
                 });
               },
             ),
-            Text('Согласен на обработку данных'),
+            Text(
+              'Согласен на обработку данных',
+              style: TextStyle(
+                //если не согласен то красенький
+                color: _isAgreed ? Colors.black : Colors.red,
+              ),
+            ),
           ],
         ),
 
         // Кнопка расчета
         ElevatedButton(
-          onPressed: () => _calculateRoots(context),
+          onPressed: _validateAndCalculate,
           child: Text('Вычислить корни'),
         ),
       ],
     );
   }
 
-  void _calculateRoots(BuildContext context) {
-    // Проверка на заполненность полей
-    if (_aController.text.isEmpty ||
-        _bController.text.isEmpty ||
-        _cController.text.isEmpty) {
-      context.read<RootsCubit>().emit(
-        RootsErrorState(errorMessage: 'Все поля должны быть заполнены'),
-      );
+  void _validateInputs() {
+    setState(() {
+      _aError = _validateCoefficient(_aController.text, 'a');
+      _bError = _validateCoefficient(_bController.text, 'b');
+      _cError = _validateCoefficient(_cController.text, 'c');
+    });
+  }
+
+  String? _validateCoefficient(String value, String coefficientName) {
+    if (value.isEmpty) return 'Введите коэффициент $coefficientName';
+    
+    final numValue = double.tryParse(value);
+    if (numValue == null) return 'Введите число';
+    
+    if (coefficientName == 'a' && numValue == 0) {
+      return 'Коэффициент a не может быть равен 0';
+    }
+    
+    return null;
+  }
+
+  void _validateAndCalculate() {
+    _validateInputs();
+
+    if (_aError != null || _bError != null || _cError != null) {
       return;
     }
 
-    // Проверка на числовые значения
-    final a = double.tryParse(_aController.text);
-    final b = double.tryParse(_bController.text);
-    final c = double.tryParse(_cController.text);
-
-    if (a == null || b == null || c == null) {
-      context.read<RootsCubit>().emit(
-        RootsErrorState(errorMessage: 'Введите корректные числовые значения'),
-      );
-      return;
-    }
-
-    // Проверка согласия
     if (!_isAgreed) {
-      context.read<RootsCubit>().emit(
-        RootsErrorState(
-          errorMessage: 'Необходимо согласие на обработку данных',
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Необходимо согласие на обработку данных')
         ),
       );
       return;
     }
 
-    // Вычисление корней
-    context.read<RootsCubit>().calculateRoots(a, b, c);
+    final a = double.parse(_aController.text);
+    final b = double.parse(_bController.text);
+    final c = double.parse(_cController.text);
+
+    widget.onCalculate(a, b, c);
   }
 }
