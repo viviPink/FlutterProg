@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'screens/first_screen.dart';
+import 'screens/pro_screen.dart';
 import 'screens/cubit/screen_cubit.dart';
 
 void main() {
@@ -17,7 +17,7 @@ class MainApp extends StatelessWidget {
       child: MaterialApp(
         debugShowCheckedModeBanner: false, // Убираем баннер "Debug"
         title: 'Квадратное уравнение',
-        home: FirstScreen(), 
+        home: QuadraticEquationScreen(), 
       ),
     );
   }
