@@ -10,6 +10,8 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc: ^7.2.0
+  sqflite: ^2.0.0+4 # Для работы с SQLite
+  path_provider: ^2.0.11 # Для получения пути к директории приложения
 
 dev_dependencies:
   flutter_test:

@@ -1,4 +1,4 @@
-import 'package:calc_abc/screens/cubit/screen_cubit.dart';
+import 'package:calc_abc/screens/cubit/sreens_cubit/screen_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
